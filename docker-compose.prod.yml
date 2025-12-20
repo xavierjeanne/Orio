@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: orio-postgres
+    environment:
+      POSTGRES_DB: orio
+      POSTGRES_USER: orio
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-orio_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - orio-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orio"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: orio-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - orio-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.prod
+      args:
+        - PHP_VERSION=8.2
+    container_name: orio-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+    environment:
+      APP_ENV: production
+      APP_DEBUG: false
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: orio
+      DB_USERNAME: orio
+      DB_PASSWORD: ${DB_PASSWORD:-orio_password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - orio-network
+    command: >
+      sh -c "php artisan config:cache &&
+             php artisan route:cache &&
+             php artisan view:cache &&
+             php artisan migrate --force &&
+             php artisan serve --host=0.0.0.0 --port=8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        - NODE_VERSION=20
+    container_name: orio-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${API_URL:-http://localhost:8000}
+    depends_on:
+      - api
+    networks:
+      - orio-network
+
+  # Optionnel: Nginx comme reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: orio-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+      - frontend
+    networks:
+      - orio-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  orio-network:
+    driver: bridge

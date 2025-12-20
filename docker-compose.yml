@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: orio-postgres
+    environment:
+      POSTGRES_DB: orio
+      POSTGRES_USER: orio
+      POSTGRES_PASSWORD: orio_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - orio-network
+
+  # Redis pour cache et queues
+  redis:
+    image: redis:7-alpine
+    container_name: orio-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - orio-network
+
+  # API Laravel
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: orio-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: orio
+      DB_USERNAME: orio
+      DB_PASSWORD: orio_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - orio-network
+
+  # Frontend Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: orio-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - api
+    networks:
+      - orio-network
+
+volumes:
+  postgres_data:
+
+networks:
+  orio-network:
+    driver: bridge

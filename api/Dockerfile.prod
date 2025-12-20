@@ -1,0 +1,58 @@
+FROM php:8.2-fpm-alpine AS base
+
+# Install system dependencies
+RUN apk add --no-cache \
+    postgresql-dev \
+    libpng-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    nginx \
+    supervisor
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
+
+# Install Redis extension
+RUN pecl install redis && docker-php-ext-enable redis
+
+# Get Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Builder stage
+FROM base AS builder
+
+COPY . /var/www/html
+
+# Install dependencies
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --no-progress \
+    --optimize-autoloader \
+    --prefer-dist
+
+# Production stage
+FROM base AS production
+
+# Create user
+RUN addgroup -g 1000 orio && \
+    adduser -D -u 1000 -G orio orio
+
+# Copy application from builder
+COPY --from=builder --chown=orio:orio /var/www/html /var/www/html
+
+# Set permissions
+RUN chown -R orio:orio /var/www/html/storage /var/www/html/bootstrap/cache && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+USER orio
+
+EXPOSE 8000
+
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
