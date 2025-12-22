@@ -38,7 +38,7 @@ services:
       context: ./api
       dockerfile: Dockerfile.prod
       args:
-        - PHP_VERSION=8.2
+        - PHP_VERSION=8.3
     container_name: orio-api
     restart: unless-stopped
     ports:

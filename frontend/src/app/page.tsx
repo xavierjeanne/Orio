@@ -3,10 +3,10 @@ export default function Home() {
     <main className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-4">
-          🎉 Orio - Agrégateur d'événements
+          🎉 Orio - Agrégateur d&apos;événements
         </h1>
         <p className="text-xl text-gray-600 mb-8">
-          Bienvenue dans votre future plateforme de découverte d'événements !
+          Bienvenue dans votre future plateforme de découverte d&apos;événements !
         </p>
         
         <div className="grid md:grid-cols-2 gap-6">
