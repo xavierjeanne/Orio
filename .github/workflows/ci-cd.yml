@@ -49,6 +49,10 @@ jobs:
           extensions: mbstring, xml, pgsql, redis
           coverage: none
 
+      - name: Install Dependencies
+        working-directory: ./api
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
       - name: Copy .env
         working-directory: ./api
         run: |
@@ -60,9 +64,6 @@ jobs:
           sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=orio_test_password/' .env
           php artisan key:generate --force
 
-      - name: Install Dependencies
-        working-directory: ./api
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Run Migrations
         working-directory: ./api
