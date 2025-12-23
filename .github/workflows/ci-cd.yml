@@ -12,10 +12,6 @@ jobs:
   backend-tests:
     name: Backend Tests & Lint
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' ||
-      contains(github.event.head_commit.modified, 'api/') ||
-      github.event_name == 'workflow_dispatch'
 
     services:
       postgres:
@@ -87,10 +83,6 @@ jobs:
   frontend-tests:
     name: Frontend Build & Lint
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' ||
-      contains(github.event.head_commit.modified, 'frontend/') ||
-      github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout code
