@@ -63,10 +63,6 @@ jobs:
         working-directory: ./api
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Generate Application Key
-        working-directory: ./api
-        run: php artisan key:generate
-
       - name: Run Migrations
         working-directory: ./api
         run: php artisan migrate --force
