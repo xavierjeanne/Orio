@@ -43,7 +43,7 @@ COPY ./docker/nginx.conf /etc/nginx/sites-available/default
 COPY --chown=$user:$user . /var/www/html
 
 # Install dependencies
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+RUN composer install --no-interaction --optimize-autoloader
 
 # Set permissions
 RUN chown -R $user:www-data /var/www/html/storage /var/www/html/bootstrap/cache

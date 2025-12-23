@@ -14,7 +14,10 @@ RUN apk add --no-cache \
     git \
     curl \
     nginx \
-    supervisor
+    supervisor \
+    autoconf \
+    g++ \
+    make
 
 # Configure GD with JPEG and PNG support
 RUN docker-php-ext-configure gd \
