@@ -11,10 +11,7 @@ RUN npm ci
 # Copy application files
 COPY . .
 
-# Build the application
-RUN npm run build
-
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "start"]
+# Start in development mode with hot-reload
+CMD ["npm", "run", "dev"]
