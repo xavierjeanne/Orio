@@ -58,6 +58,7 @@ jobs:
           sed -i 's/DB_DATABASE=.*/DB_DATABASE=orio_test/' .env
           sed -i 's/DB_USERNAME=.*/DB_USERNAME=orio/' .env
           sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=orio_test_password/' .env
+          php artisan key:generate --force
 
       - name: Install Dependencies
         working-directory: ./api
