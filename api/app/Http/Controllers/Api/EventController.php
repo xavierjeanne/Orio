@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Event;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use App\Resources\EventResource;
 use App\Http\Controllers\Controller;
+use App\Models\Event;
+use App\Resources\EventResource;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 
 class EventController extends Controller
 {
@@ -29,8 +27,6 @@ class EventController extends Controller
 
     /**
      * Store a newly created event in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
      */
     public function store(Request $request)
     {
@@ -57,7 +53,6 @@ class EventController extends Controller
     /**
      * Display the specified event.
      *
-     * @param  string  $slug
      * @return \App\Resources\EventResource
      */
     public function show(string $slug)

@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\FavoriteController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     // Public routes
@@ -18,7 +18,7 @@ Route::prefix('v1')->group(function () {
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
-         Route::get('/favorites', [FavoriteController::class, 'index']);
+        Route::get('/favorites', [FavoriteController::class, 'index']);
         Route::post('/favorites/{event}', [FavoriteController::class, 'store']);
         Route::delete('/favorites/{event}', [FavoriteController::class, 'destroy']);
 

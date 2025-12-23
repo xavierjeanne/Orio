@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('meta_title')->nullable();
             $table->string('meta_description')->nullable();
             $table->timestamps();
-            
+
             $table->index(['status', 'start_date']);
             $table->index(['category_id', 'start_date']);
         });

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Resources;
-use App\Models\Event;
+
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class FavoriteResource extends JsonResource

@@ -2,17 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Role;
 use App\Models\Category;
-use App\Models\Tag;
 use App\Models\City;
-use App\Models\PlaceType;
-use App\Models\Place;
 use App\Models\Event;
+use App\Models\Place;
+use App\Models\PlaceType;
+use App\Models\Role;
+use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -62,8 +61,8 @@ class DatabaseSeeder extends Seeder
                 ['slug' => $category['slug']],
                 [
                     'name' => $category['name'],
-                    'meta_title' => 'Événements ' . $category['name'],
-                    'meta_description' => 'Découvrez tous les événements de ' . $category['name'],
+                    'meta_title' => 'Événements '.$category['name'],
+                    'meta_description' => 'Découvrez tous les événements de '.$category['name'],
                 ]
             );
         }
@@ -147,7 +146,7 @@ class DatabaseSeeder extends Seeder
         );
 
         // Attach tags if not already attached
-        if (!$event->tags()->where('tags.id', $rockTag->id)->exists()) {
+        if (! $event->tags()->where('tags.id', $rockTag->id)->exists()) {
             $event->tags()->attach($rockTag);
         }
 

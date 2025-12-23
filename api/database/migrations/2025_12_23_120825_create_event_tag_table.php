@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('event_tag', function (Blueprint $table) {
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
             $table->foreignId('tag_id')->constrained()->onDelete('cascade');
-            
+
             $table->primary(['event_id', 'tag_id']);
         });
     }
