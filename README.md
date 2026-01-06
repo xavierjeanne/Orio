@@ -34,7 +34,7 @@ Orio permet aux utilisateurs de découvrir facilement les événements qui se pa
 
 ```
 orio/
-├── api/              # Backend Laravel (PHP 8.2)
+├── api/              # Backend Laravel (PHP 8.3)
 ├── frontend/         # Frontend Next.js (TypeScript)
 ├── scraper/          # Scraper Python (à venir)
 └── docker-compose.yml
@@ -56,44 +56,89 @@ cd orio
 
 2. Copier les fichiers d'environnement
 ```bash
+# Windows (PowerShell)
+Copy-Item .env.example .env
+Copy-Item api/.env.example api/.env
+
+# Linux/Mac
 cp .env.example .env
+cp api/.env.example api/.env
 ```
 
 3. Démarrer les services avec Docker
 ```bash
-docker-compose up -d
+# Environnement de développement (avec Adminer)
+docker compose --profile dev up -d --build
+
+# Environnement de production (sans Adminer)
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-4. Installer Laravel (première fois)
+> ⚠️ **Note** : Les dépendances (Composer et npm) sont installées automatiquement lors du build Docker
+
+4. Initialiser Laravel (première fois uniquement)
 ```bash
-# Se connecter au container API
-docker exec -it orio-api bash
-
-# Installer les dépendances
-composer install
-
-# Générer la clé
-php artisan key:generate
+# Générer la clé d'application
+docker exec orio-api php artisan key:generate
 
 # Lancer les migrations
-php artisan migrate
-```
+docker exec orio-api php artisan migrate
 
-5. Installer le frontend (première fois)
-```bash
-# Se connecter au container Frontend
-docker exec -it orio-frontend sh
-
-# Installer les dépendances
-npm install
+# (Optionnel) Remplir avec des données de test
+docker exec orio-api php artisan db:seed
 ```
 
 ### Accès aux services
 
 - **Frontend** : http://localhost:3000
 - **API** : http://localhost:8000
-- **PostgreSQL** : localhost:5432
+- **PostgreSQL** : localhost:5432 (user: `orio`, password: `orio_password`, db: `orio`)
 - **Redis** : localhost:6379
+- **Adminer** (gestion BDD - DEV uniquement) : http://localhost:8081
+
+> ⚠️ **Sécurité** : Adminer est disponible uniquement en mode développement via le profil `--profile dev`. Il n'est pas inclus en production pour des raisons de sécurité.
+
+## 🧪 Tests et Qualité du Code
+
+### Vérifications manuelles
+
+```bash
+# Tous les tests et linters
+npm run precommit
+
+# Tests uniquement
+npm run test              # Backend + Frontend
+npm run test:backend      # PHPUnit (Laravel)
+npm run test:frontend     # ESLint (Next.js)
+
+# Linters uniquement
+npm run lint              # Backend + Frontend (mode check)
+npm run lint:fix          # Backend + Frontend (auto-fix)
+npm run lint:backend      # Laravel Pint
+npm run lint:frontend     # ESLint
+```
+
+### Avec Makefile (Linux/Mac/WSL)
+
+```bash
+make help          # Afficher toutes les commandes
+make precommit     # Lancer tous les tests et linters
+make test          # Tests backend + frontend
+make lint          # Vérifier le code style
+make lint-fix      # Corriger automatiquement le code style
+```
+
+### Git Hook Pre-commit
+
+Un **hook pre-commit** a été configuré pour exécuter automatiquement les vérifications avant chaque commit :
+- ✅ Laravel Pint (style PHP)
+- ✅ PHPUnit (tests backend)
+- ✅ ESLint (style TypeScript)
+
+Le commit sera **bloqué** si une vérification échoue. Pour contourner temporairement (déconseillé) :
+```bash
+git commit --no-verify -m "message"
+```
 
 ## 📚 Documentation
 
@@ -103,9 +148,10 @@ npm install
 ## 🛠️ Stack technique
 
 ### Backend
-- **Laravel 11** - Framework PHP
-- **PostgreSQL** - Base de données
-- **Redis** - Cache & Queues
+- **Laravel 12** - Framework PHP
+- **PHP 8.3** - Langage backend
+- **PostgreSQL 15** - Base de données
+- **Redis 7** - Cache & Queues
 - **Sanctum** - Authentification API
 
 ### Frontend

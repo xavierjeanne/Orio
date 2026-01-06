@@ -12,9 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->api(prepend: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        ]);
+        // Pas de middleware stateful pour les routes API
+        // On utilise uniquement les tokens Bearer (pas de cookies/sessions)
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

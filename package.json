@@ -1,0 +1,21 @@
+{
+  "name": "orio",
+  "version": "1.0.0",
+  "description": "Agrégateur d'événements",
+  "scripts": {
+    "test": "docker exec orio-api php artisan test && docker exec orio-frontend npm run lint",
+    "test:backend": "docker exec orio-api php artisan test",
+    "test:frontend": "docker exec orio-frontend npm run lint",
+    "lint": "docker exec orio-api vendor/bin/pint --test && docker exec orio-frontend npm run lint",
+    "lint:fix": "docker exec orio-api vendor/bin/pint && docker exec orio-frontend npm run lint",
+    "lint:backend": "docker exec orio-api vendor/bin/pint --test",
+    "lint:frontend": "docker exec orio-frontend npm run lint",
+    "precommit": "npm run lint && npm run test:backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xavierjeanne/orio.git"
+  },
+  "author": "Xavier Jeanne",
+  "license": "MIT"
+}

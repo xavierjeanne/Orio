@@ -17,6 +17,7 @@ Route::prefix('v1')->group(function () {
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/me', [AuthController::class, 'me']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/favorites', [FavoriteController::class, 'index']);
         Route::post('/favorites/{event}', [FavoriteController::class, 'store']);
