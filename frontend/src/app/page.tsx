@@ -62,11 +62,11 @@ export default async function Home() {
   }
 
   return (
-    <main className="min-h-screen p-8 bg-gray-50">
+    <main className="min-h-screen p-8 bg-background text-foreground">
       <div className="max-w-6xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gray-900">
-            🎉 Orio - Agrégateur d&apos;événements
+          <h1 className="text-4xl font-bold text-red-500">
+            🎉 Orio - Agrégateur d&apos;événements t as vu
           </h1>
           <p className="text-xl text-gray-600">
             Découvrez les événements à venir près de chez vous
